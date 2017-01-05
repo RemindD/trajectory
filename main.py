@@ -5,12 +5,19 @@
 # @File     : main,py
 
 from trajectory import *
+from test_case import *
 
 
 def main():
-    test_case = [0, 5, 0, 3 * pi / 4, 0]
+    testcase = [0, 5, 0, 3 * pi / 4, 0]
 
-    new_traj = Trajectory(test_case)
+    case = test_case()
+
+    case.generate()
+
+    print(case.case[0])
+
+    new_traj = Trajectory(case.case[0][1])
 
     param = new_traj.fine_tune()
 

@@ -13,7 +13,7 @@ from numpy import sin, cos, pi
 class Trajectory:
     def __init__(self, constraint):
         self.constraint = constraint
-        self.param = np.array([0, 0, 0, constraint[3] ** 2 / 5 + 1])
+        self.param = np.array([random.uniform(-10, 10), random.uniform(-10, 10), random.uniform(-10, 10), random.uniform(-5, 5)])
 
     def input_check(self):
         if len(self.constraint) != 5:
@@ -46,15 +46,15 @@ class Trajectory:
                        self.constraint[4] - (self.constraint[0] + self.param[0] * sf +
                                              self.param[1] * sf2 + self.param[2] * sf3)])
         # print(pg.I)
-        print(g)
+        #print(g)
         delta = pg.I * g.T
-        print(self.param)
-        print(delta.T)
+        #print(self.param)
+        #print(delta.T)
         # print(delta)
         # print(self.param)
 
         for i in range(4):
-            self.param[i] += 3 * float(delta[i]) / (max(abs(delta)))
+            self.param[i] += delta[i]
 
         l = simps(self.cn(x, 0), x)
         m = simps(self.sn(x, 0), x)
@@ -67,7 +67,7 @@ class Trajectory:
             return []
 
         # while True:
-        for i in range(1000):
+        for i in range(100):
             delta = self.update()
             # print ("delta", delta)
             #   norm = d_norm(delta)
@@ -81,10 +81,10 @@ class Trajectory:
                self.param[1] * (s ** 3) / 3 + self.param[2] * (s ** 4) / 4
 
     def sn(self, s, n):
-        return s ** n * sin(self.theta(s))
+        return (s ** n) * sin(self.theta(s))
 
     def cn(self, s, n):
-        return s ** n * cos(self.theta(s))
+        return (s ** n) * cos(self.theta(s))
 
 
 def d_norm(delta):
