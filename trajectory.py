@@ -11,23 +11,30 @@ from numpy import sin, cos, pi
 
 
 class Trajectory:
+    # initialization function: constraint and parameter (b, c, d, sf)
     def __init__(self, constraint):
         self.constraint = constraint
         self.param = np.array([0, 0, 0, constraint[3] ** 2 / 5 + 1])
 
+    # check whether constraints include five elements
     def input_check(self):
         if len(self.constraint) != 5:
             return False
         else:
             return True
 
+    # update one epic
     def update(self):
+
+        # samples used to calculate integrals
         x = np.arange(0, self.param[3], float(self.param[3]) / 10)
 
+        # power of sf
         sf = self.param[3]
         sf2 = sf * sf
         sf3 = sf2 * sf
 
+        # calculate partial derivative of constraints on parameters
         px = np.array([-simps(self.sn(x, 1), x), -simps(self.sn(x, 2), x) / 2,
                        -simps(self.sn(x, 3), x) / 3, cos(self.theta(sf))])
         py = np.array([simps(self.cn(x, 1), x), simps(self.cn(x, 2), x) / 2,
@@ -38,23 +45,25 @@ class Trajectory:
         pk = np.array([1, sf, sf2, self.param[0] + 2 * self.param[1] * sf +
                        3 * self.param[2] * sf2])
 
+        # put all partial derivative into one big matrix
         pg = np.matrix([px, py, pt, pk])
-        # print(pg)
+
+        # calculate error on constraint
         g = np.matrix([self.constraint[1] - simps(self.cn(x, 0), x),
                        self.constraint[2] - simps(self.sn(x, 0), x),
                        self.constraint[3] - self.theta(sf),
                        self.constraint[4] - (self.constraint[0] + self.param[0] * sf +
                                              self.param[1] * sf2 + self.param[2] * sf3)])
         # print(pg.I)
-        print(g)
-        delta = pg.I * g.T
-        print(self.param)
-        print(delta.T)
+        # print(g)
+        delta = np.linalg.inv(pg) * g.transpose()
+        # print(self.param)
+        # print(delta.T)
         # print(delta)
         # print(self.param)
 
         for i in range(4):
-            self.param[i] += 3 * float(delta[i]) / (max(abs(delta)))
+            self.param[i] += delta[i]
 
         l = simps(self.cn(x, 0), x)
         m = simps(self.sn(x, 0), x)
@@ -67,7 +76,7 @@ class Trajectory:
             return []
 
         # while True:
-        for i in range(1000):
+        for i in range(2000):
             delta = self.update()
             # print ("delta", delta)
             #   norm = d_norm(delta)

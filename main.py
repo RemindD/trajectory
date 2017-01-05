@@ -8,7 +8,7 @@ from trajectory import *
 
 
 def main():
-    test_case = [0, 5, 0, 3 * pi / 4, 0]
+    test_case = [0, 5, 5, 0, 0]
 
     new_traj = Trajectory(test_case)
 
