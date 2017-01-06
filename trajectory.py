@@ -11,9 +11,13 @@ from numpy import sin, cos, pi
 
 
 class Trajectory:
-    def __init__(self, constraint):
+    def __init__(self, constraint, realparam):
         self.constraint = constraint
-        self.param = np.array([random.uniform(-10, 10), random.uniform(-10, 10), random.uniform(-10, 10), random.uniform(-5, 5)])
+        print realparam
+        self.param = np.array([random.random(), random.random(),
+                               random.random(), 0.9])
+        # self.param = np.array(realparam)
+        print(self.param)
 
     def input_check(self):
         if len(self.constraint) != 5:
@@ -22,43 +26,39 @@ class Trajectory:
             return True
 
     def update(self):
-        x = np.arange(0, self.param[3], float(self.param[3]) / 10)
+        x = np.arange(0, self.param[3], float(self.param[3]) / 10000)
 
         sf = self.param[3]
         sf2 = sf * sf
         sf3 = sf2 * sf
+        sf4 = sf2 * sf2
 
-        px = np.array([-simps(self.sn(x, 1), x), -simps(self.sn(x, 2), x) / 2,
-                       -simps(self.sn(x, 3), x) / 3, cos(self.theta(sf))])
-        py = np.array([simps(self.cn(x, 1), x), simps(self.cn(x, 2), x) / 2,
-                       simps(self.cn(x, 3), x) / 3, sin(self.theta(sf))])
+        px = np.array([-simps(self.sn(x, 2), x) / 2, -simps(self.sn(x, 3), x) / 3,
+                       -simps(self.sn(x, 4), x) / 4, cos(self.theta(sf))])
+        py = np.array([simps(self.cn(x, 2), x) / 2, simps(self.cn(x, 3), x) / 3,
+                       simps(self.cn(x, 4), x) / 4, sin(self.theta(sf))])
 
-        pt = np.array([sf, sf2 / 2, sf3 / 3, self.constraint[0] + self.param[0] * sf +
-                       self.param[1] * sf2 + self.param[2] * sf3])
-        pk = np.array([1, sf, sf2, self.param[0] + 2 * self.param[1] * sf +
+        pt = np.array([sf2 / 2, sf3 / 3, sf4 / 4, self.calk(sf)])
+        pk = np.array([sf, sf2, sf3, self.param[0] + 2 * self.param[1] * sf +
                        3 * self.param[2] * sf2])
 
         pg = np.matrix([px, py, pt, pk])
-        # print(pg)
+
         g = np.matrix([self.constraint[1] - simps(self.cn(x, 0), x),
                        self.constraint[2] - simps(self.sn(x, 0), x),
                        self.constraint[3] - self.theta(sf),
-                       self.constraint[4] - (self.constraint[0] + self.param[0] * sf +
-                                             self.param[1] * sf2 + self.param[2] * sf3)])
-        # print(pg.I)
-        #print(g)
-        delta = pg.I * g.T
-        #print(self.param)
-        #print(delta.T)
-        # print(delta)
-        # print(self.param)
+                       self.constraint[4] - self.calk(sf)
+                       ])
+        print ("g", g)
+        delta = np.linalg.pinv(pg) * g.transpose()
+        # print("param", self.param)
+
+        print("delta", delta.T)
+
 
         for i in range(4):
             self.param[i] += delta[i]
 
-        l = simps(self.cn(x, 0), x)
-        m = simps(self.sn(x, 0), x)
-        print (l, m)
         return delta
 
     def fine_tune(self):
@@ -66,19 +66,18 @@ class Trajectory:
             print "Input size is not right."
             return []
 
-        # while True:
-        for i in range(100):
+        for i in range(10):
             delta = self.update()
-            # print ("delta", delta)
-            #   norm = d_norm(delta)
-            #   if norm < 10:
-            #       break
 
         return self.param
 
     def theta(self, s):
         return self.constraint[0] * s + self.param[0] * s * s / 2 + \
                self.param[1] * (s ** 3) / 3 + self.param[2] * (s ** 4) / 4
+
+    def calk(self, s):
+        return self.constraint[0] + self.param[0] * s + \
+               self.param[1] * (s ** 2) + self.param[2] * (s ** 3)
 
     def sn(self, s, n):
         return (s ** n) * sin(self.theta(s))

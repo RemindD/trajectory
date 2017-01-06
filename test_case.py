@@ -17,9 +17,11 @@ class test_case:
         case = []
 
     def generate(self):
-        param = [random.uniform(-10, 10) for i in range(3)]
-        param.append(5*random.random())
+        param = [random.uniform(-10.0 / (i + 1), 10.0 / (i + 1)) for i in range(3)]
+        param.append(random.random())
+        param = [-0.043305826859034724, -1.9372809678470935, 3.0586845438707155, 1.0]
         a = 10 * random.random()
+        a = 3.2832521833924955
 
         self.cal(param, a)
 
@@ -27,17 +29,8 @@ class test_case:
         return a + param[0] * s + param[1] * (s**2) + param[2] * (s**3)
 
     def theta(self, s, param, a):
-
-        if type(s) is np.ndarray:
-            val = [0]
-            for i in range(1, len(s)):
-                sample = np.arange(0, s[i], float(i)/10)
-                val.append(simps(self.calk(sample, param, a), sample))
-            #print(val)
-            return val
-        else:
-            sample = np.arange(0, s, float(s) / 10)
-            return simps(self.calk(sample, param, a), sample)
+        return a * s + param[0] * (s ** 2) / 2 + param[1] * (s ** 3) / 3 + \
+               param[2] * (s ** 4) / 4
 
     def cal(self, param, a):
         sample = np.arange(0, param[3], float(param[3])/50)
