@@ -17,4 +17,12 @@ main.py:        interface of the algorithm
 1. the integration among sin, cos function uses Simpson's rule
 
 2. gradient shooting method works only in fine-tune period
+
+3. Initial the parameters via:
+
+    b = (k_f^2 - k_0^2) / (2*theta_f)
+    
+    s = 2 * theta_f / (k_0 + k_f)
+    
+    c = d = 0
  

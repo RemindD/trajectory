@@ -13,9 +13,11 @@ def fplot(a, param1, param2):
     x1, y1 = caltraj(a, param1)
     x2, y2 = caltraj(a, param2)
     plt.subplot(121)
-    plt.plot(x1, y1)
+    plt.plot(x1, y1, label=(a, param1))
+    plt.legend()
     plt.subplot(122)
-    plt.plot(x2, y2)
+    plt.plot(x2, y2, label=(a, param2))
+    plt.legend()
     plt.show()
 
     return [x1[len(x1)-1], y1[len(y1)-1], x2[len(x2)-1], y2[len(y2)-1]]

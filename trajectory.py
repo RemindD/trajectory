@@ -8,15 +8,16 @@ import random
 import numpy as np
 from scipy.integrate import simps
 from numpy import sin, cos, pi
+from plot import *
 
 
 class Trajectory:
     def __init__(self, constraint, realparam):
         self.constraint = constraint
-        print realparam
-        self.param = np.array([0, 0, 0, abs(constraint[1])+abs(constraint[2])])
-        # self.param = np.array(realparam)
-        print(self.param)
+        self.realparam = realparam
+        self.param = np.array([0.5 * (constraint[4] ** 2 - constraint[0] ** 2) / constraint[3],
+                               0, 0,
+                               2 * abs((constraint[3] / (constraint[0] + constraint[4])))])
 
     def input_check(self):
         if len(self.constraint) != 5:
@@ -48,45 +49,42 @@ class Trajectory:
                        self.constraint[3] - self.theta(sf),
                        self.constraint[4] - self.calk(sf)
                        ])
-        print ("g", g)
+
         delta = np.linalg.pinv(pg) * g.transpose()
-        # print("param", self.param)
-
-        print("delta", delta.T)
-
 
         for i in range(4):
             self.param[i] += delta[i]
 
-        return delta
+        return g
 
     def fine_tune(self):
         if not self.input_check():
             print "Input size is not right."
             return []
 
-        for i in range(100):
-            delta = self.update()
-            gain = 0
-            for i in range(4):
-                gain += (delta[i]*100)**2
-            if gain < 0.01:
-                break;
+        for i in range(3):
+            g = self.update()
 
-
+        if abs(self.param[0]) + abs(self.param[1]) + abs(self.param[2]) + abs(self.param[3]) > 1000:
+            print(self.realparam, [0.5 * (self.constraint[4] ** 2 - self.constraint[0] ** 2) / self.constraint[3],
+                                   0, 0, 2 * abs(self.constraint[3] / (self.constraint[0] + self.constraint[4]))])
+            fplot(self.constraint[0], self.realparam, self.param)
         return self.param
 
     def theta(self, s):
-        return self.constraint[0] * s + self.param[0] * s * s / 2 + \
-               self.param[1] * (s ** 3) / 3 + self.param[2] * (s ** 4) / 4
+        res = self.param[2] / 4.0 * s
+        res = (res + self.param[1] / 3.0) * s
+        res = (res + self.param[0] / 2.0) * s
+        return (res + self.constraint[0]) * s
 
     def calk(self, s):
-        return self.constraint[0] + self.param[0] * s + \
-               self.param[1] * (s ** 2) + self.param[2] * (s ** 3)
+        res = self.param[2] * s
+        res = (res + self.param[1]) * s
+        res = (res + self.param[0]) * s
+        return res + self.constraint[0]
 
     def sn(self, s, n):
         return (s ** n) * sin(self.theta(s))
 
     def cn(self, s, n):
         return (s ** n) * cos(self.theta(s))
-

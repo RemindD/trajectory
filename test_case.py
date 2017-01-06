@@ -13,17 +13,17 @@ from scipy.integrate import simps
 class test_case:
 
     case = []
+
     def __init__(self):
         case = []
 
     def generate(self):
-        param = [random.uniform(-10.0, 10.0) for i in range(3)]
-        param.append(random.random())
-        #param = [-0.043305826859034724, -1.9372809678470935, 3.0586845438707155, 1.0]
-        a = 10 * random.random()
-        #a = 3.2832521833924955
+        for i in range(1000):
+            param = [random.uniform(-10.0, 10.0) for i in range(3)]
+            param.append(random.random())
+            a = random.uniform(-5.0, 5.0)
 
-        self.cal(param, a)
+            self.cal(param, a)
 
     def calk(self, s, param, a):
         return a + param[0] * s + param[1] * (s**2) + param[2] * (s**3)
@@ -37,7 +37,12 @@ class test_case:
 
         x = simps(cos(self.theta(sample, param, a)), sample)
         y = simps(sin(self.theta(sample, param, a)), sample)
+        sample_t = self.theta(sample, param, a)
+        for i in range(len(sample_t)):
+            if abs(sample_t[i] > pi / 2):
+                return
         t = self.theta(param[3], param, a)
         k = self.calk(param[3], param, a)
 
-        self.case.append([param, [a, x, y, t, k]])
+        if abs(t) < pi / 2:
+            self.case.append([param, [a, x, y, t, k]])
