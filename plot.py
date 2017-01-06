@@ -18,6 +18,8 @@ def fplot(a, param1, param2):
     plt.plot(x2, y2)
     plt.show()
 
+    return [x1[len(x1)-1], y1[len(y1)-1], x2[len(x2)-1], y2[len(y2)-1]]
+
 
 def caltraj(a, param):
     sample = np.arange(0, param[3], param[3] / 1000)

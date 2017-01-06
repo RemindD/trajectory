@@ -14,8 +14,7 @@ class Trajectory:
     def __init__(self, constraint, realparam):
         self.constraint = constraint
         print realparam
-        self.param = np.array([random.random(), random.random(),
-                               random.random(), 0.9])
+        self.param = np.array([0, 0, 0, abs(constraint[1])+abs(constraint[2])])
         # self.param = np.array(realparam)
         print(self.param)
 
@@ -26,7 +25,7 @@ class Trajectory:
             return True
 
     def update(self):
-        x = np.arange(0, self.param[3], float(self.param[3]) / 10000)
+        x = np.arange(0, self.param[3], float(self.param[3]) / 1000)
 
         sf = self.param[3]
         sf2 = sf * sf
@@ -66,8 +65,14 @@ class Trajectory:
             print "Input size is not right."
             return []
 
-        for i in range(10):
+        for i in range(100):
             delta = self.update()
+            gain = 0
+            for i in range(4):
+                gain += (delta[i]*100)**2
+            if gain < 0.01:
+                break;
+
 
         return self.param
 
@@ -85,11 +90,3 @@ class Trajectory:
     def cn(self, s, n):
         return (s ** n) * cos(self.theta(s))
 
-
-def d_norm(delta):
-    res = 0
-
-    for i in range(len(delta)):
-        res += delta[i] * delta[i]
-
-    return res
