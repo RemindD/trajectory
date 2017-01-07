@@ -39,7 +39,7 @@ class test_case:
         y = simps(sin(self.theta(sample, param, a)), sample)
         sample_t = self.theta(sample, param, a)
         for i in range(len(sample_t)):
-            if abs(sample_t[i] > pi / 2):
+            if abs(sample_t[i] > pi):
                 return
         t = self.theta(param[3], param, a)
         k = self.calk(param[3], param, a)

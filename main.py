@@ -11,11 +11,10 @@ import time
 
 
 def main():
-
-    case = test_case()
-
-    case.generate()
-    print len(case.case)
+    # case = test_case()
+    print pi
+    # case.generate()
+    # print len(case.case)
 
     # time1 = time.time()
     # for i in range(len(case.case)):
@@ -25,10 +24,11 @@ def main():
     # time2 = time.time()
 
     # print (time2 - time1) / len(case.case)
-
-    new_case = [0, 0, 5, pi / 2, 0]
-    new_traj = Trajectory(new_case)
-    param = new_traj.fine_tune()
-    print param
-    plot(0, param)
+    for i in range(10):
+        new_case = [random.uniform(-0.1, 0.1), random.uniform(5, 15), random.uniform(-5, 5),
+                    random.uniform(-4 * pi / 5, 4 * pi / 5), random.uniform(-0.1, 0.1)]
+        new_traj = Trajectory(new_case)
+        param = new_traj.fine_tune()
+        print param
+        plot(0, param)
 main()

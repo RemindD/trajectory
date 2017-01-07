@@ -20,11 +20,12 @@ class Trajectory:
                                0, 0,
                                2 * abs((constraint[3] / (constraint[0] + constraint[4])))])
         '''
-        d = math.sqrt(constraint[1] ** 2 + constraint[2] ** 2)
+        d = math.sqrt(float(constraint[1] ** 2 + constraint[2] ** 2))
         s = d * (constraint[3] ** 2 / 5 + 1) + 2 * abs(constraint[3]) / 5
         b = 6 * constraint[3] / (s ** 2) - 2 * constraint[0] / s + 4 * constraint[4] / s
         c = 3 * (constraint[0] + constraint[4]) / (s ** 2) + 6 * constraint[3] / (s ** 3)
         self.param = np.array([b, c, 0, s])
+
         print self.param
 
     def input_check(self):
@@ -57,7 +58,7 @@ class Trajectory:
                        self.constraint[3] - self.theta(sf),
                        self.constraint[4] - self.calk(sf)
                        ])
-
+        # print g
         delta = np.linalg.pinv(pg) * g.transpose()
 
         for i in range(4):
@@ -70,7 +71,7 @@ class Trajectory:
             print "Input size is not right."
             return []
 
-        for i in range(3):
+        for i in range(5):
             g = self.update()
 
         return self.param
