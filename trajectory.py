@@ -7,17 +7,25 @@
 import random
 import numpy as np
 from scipy.integrate import simps
+import math
 from numpy import sin, cos, pi
 from plot import *
 
 
 class Trajectory:
-    def __init__(self, constraint, realparam):
+    def __init__(self, constraint):
         self.constraint = constraint
-        self.realparam = realparam
+        '''
         self.param = np.array([0.5 * (constraint[4] ** 2 - constraint[0] ** 2) / constraint[3],
                                0, 0,
                                2 * abs((constraint[3] / (constraint[0] + constraint[4])))])
+        '''
+        d = math.sqrt(constraint[1] ** 2 + constraint[2] ** 2)
+        s = d * (constraint[3] ** 2 / 5 + 1) + 2 * abs(constraint[3]) / 5
+        b = 6 * constraint[3] / (s ** 2) - 2 * constraint[0] / s + 4 * constraint[4] / s
+        c = 3 * (constraint[0] + constraint[4]) / (s ** 2) + 6 * constraint[3] / (s ** 3)
+        self.param = np.array([b, c, 0, s])
+        print self.param
 
     def input_check(self):
         if len(self.constraint) != 5:
@@ -65,10 +73,6 @@ class Trajectory:
         for i in range(3):
             g = self.update()
 
-        if abs(self.param[0]) + abs(self.param[1]) + abs(self.param[2]) + abs(self.param[3]) > 1000:
-            print(self.realparam, [0.5 * (self.constraint[4] ** 2 - self.constraint[0] ** 2) / self.constraint[3],
-                                   0, 0, 2 * abs(self.constraint[3] / (self.constraint[0] + self.constraint[4]))])
-            fplot(self.constraint[0], self.realparam, self.param)
         return self.param
 
     def theta(self, s):

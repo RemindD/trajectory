@@ -23,6 +23,13 @@ def fplot(a, param1, param2):
     return [x1[len(x1)-1], y1[len(y1)-1], x2[len(x2)-1], y2[len(y2)-1]]
 
 
+def plot(a, param):
+    x, y = caltraj(a, param)
+    plt.figure()
+    plt.plot(x, y)
+    plt.show()
+
+
 def caltraj(a, param):
     sample = np.arange(0, param[3], param[3] / 1000)
     x = [0]
