@@ -32,7 +32,7 @@ def main():
         new_traj = Trajectory(new_case)
         param = new_traj.fine_tune()
         #plot(a, param)
-
+        '''
         x = np.arange(0, new_traj.param[3], float(new_traj.param[3]) / 1000)
         g = [new_traj.constraint[1] - simps(new_traj.cn(x, 0), x),
              new_traj.constraint[2] - simps(new_traj.sn(x, 0), x),
@@ -41,7 +41,7 @@ def main():
         #print g
         if abs(g[0])+abs(g[1])+abs(g[2])+abs(g[3])>1:
             false += 1
-
+        '''
         #print param
     time2 = time.time()
     print (time2 - time1) / 200.0

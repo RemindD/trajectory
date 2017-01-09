@@ -34,29 +34,44 @@ class Trajectory:
 
     def update(self, scale):
         x = np.arange(0, self.param[3], float(self.param[3]) / 100)
-
+        cosx = cos(self.theta(x))
+        sinx = sin(self.theta(x))
+        x2 = np.power(x, 2)
+        x3 = np.power(x, 3)
+        x4 = np.power(x, 4)
         sf = self.param[3]
         sf2 = sf * sf
         sf3 = sf2 * sf
         sf4 = sf2 * sf2
-
+        '''
         px = np.array([-simps(self.sn(x, 2), x) / 2, -simps(self.sn(x, 3), x) / 3,
                        -simps(self.sn(x, 4), x) / 4, cos(self.theta(sf))])
         py = np.array([simps(self.cn(x, 2), x) / 2, simps(self.cn(x, 3), x) / 3,
                        simps(self.cn(x, 4), x) / 4, sin(self.theta(sf))])
+        '''
+
+        px = np.array([-simps(np.multiply(sinx, x2), x) / 2, -simps(np.multiply(sinx, x3), x) / 3,
+                       -simps(np.multiply(sinx, x4), x) / 4, cosx[len(cosx)-1]])
+        py = np.array([simps(np.multiply(cosx, x2), x) / 2, simps(np.multiply(cosx, x3), x) / 3,
+                       simps(np.multiply(cosx, x4), x) / 4, sinx[len(sinx)-1]])
 
         pt = np.array([sf2 / 2, sf3 / 3, sf4 / 4, self.calk(sf)])
         pk = np.array([sf, sf2, sf3, self.param[0] + 2 * self.param[1] * sf +
                        3 * self.param[2] * sf2])
 
         pg = np.matrix([px, py, pt, pk])
-
+        '''
         g = np.matrix([self.constraint[1] - simps(self.cn(x, 0), x),
                        self.constraint[2] - simps(self.sn(x, 0), x),
                        self.constraint[3] - self.theta(sf),
                        self.constraint[4] - self.calk(sf)
                        ])
-
+        '''
+        g = np.matrix([self.constraint[1] - simps(cosx, x),
+                       self.constraint[2] - simps(sinx, x),
+                       self.constraint[3] - self.theta(sf),
+                       self.constraint[4] - self.calk(sf)
+                       ])
         delta = np.linalg.inv(pg) * g.transpose()
 
         for i in range(4):
