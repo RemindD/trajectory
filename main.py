@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 # @Time     :  1:49 PM
 # @Author   : Xingdong Li
-# @File     : main,py
+# @File     : main.py
 
 from trajectory import *
 from test_case import *

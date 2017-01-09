@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 # @Time     :  3:22 PM
 # @Author   : Xingdong Li
-# @File     : plot,py
+# @File     : plot.py
 
 import numpy as np
 from scipy.integrate import simps

@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 # @Time     :  10:38 AM
 # @Author   : Xingdong Li
-# @File     : trajectory,py
+# @File     : trajectory.py
 
 import random
 import numpy as np
