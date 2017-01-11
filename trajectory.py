@@ -96,15 +96,15 @@ class Trajectory:
 
     def theta(self, s):
         res = self.param[2] / 4.0 * s
-        res = (res + self.param[1] / 3.0) * s
-        res = (res + self.param[0] / 2.0) * s
-        res = (res + self.constraint[0]) * s
+        res = np.multiply(res + self.param[1] / 3.0, s)
+        res = np.multiply(res + self.param[0] / 2.0, s)
+        res = np.multiply(res + self.constraint[0], s)
         return res
 
     def calk(self, s):
         res = self.param[2] * s
-        res = (res + self.param[1]) * s
-        res = (res + self.param[0]) * s
+        res = np.multiply(res + self.param[1], s)
+        res = np.multiply(res + self.param[0], s)
         res = res + self.constraint[0]
 
         return res
